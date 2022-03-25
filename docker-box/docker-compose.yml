@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  db-mysql:
+    image: mysql:8.0.28
+    # I'm so noob, so I need to leave comment as below to make sure that I can understand what I'm doing right now （；＿；）
+    restart: always # Always restart the container if it stops. If it is manually stopped, it is restarted only when Docker daemon restarts or the container itself is manually restarted
+    command: --default-authentication-plugin=mysql_native_password # for what????
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - 3306:3306 # Expose ports. Either specify both ports (HOST:CONTAINER), or just the container port (a random host port will be chosen).
+    expose:
+      - 3306 # Expose ports without publishing them to the host machine - they’ll only be accessible to linked services. Only the internal port can be specified.
+      # In recent versions of Dockerfile, EXPOSE doesn't have any operational impact anymore, it is just informative majica :|
+    volumes:
+      - ./persistence/mysql/:/var/lib/mysql:rw
+
+  adminer:
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - 8080:8080
